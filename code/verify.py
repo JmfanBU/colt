@@ -15,7 +15,7 @@ from utils import get_inputs, get_network
 from refinement import refine
 
 dtype = torch.float64
-device = 'cuda'
+device = 'cpu'
 
 
 def report(ver_logdir, tot_verified_corr, tot_nat_ok, tot_attack_ok, tot_pgd_ok, test_idx, tot_tests, test_data):
@@ -210,7 +210,7 @@ def verify_test(args, net, inputs, targets, abs_inputs, bounds, test_data, test_
         model.setObjective(neurons[n_layers-1][targets[0].item()] - neurons[n_layers-1][adv_idx], GRB.MINIMIZE)
         model.update()
         model.optimize(callback)
-        
+
         print('MILP: ', targets[0].item(), adv_idx, model.objVal, model.objBound, model.RunTime)
         test_data[adv_idx] = {
             'milp_timeout': args.milp_timeout,
@@ -258,7 +258,7 @@ def main():
             print('Verify test_idx =', test_idx)
 
             net.reset_bounds()
-            
+
             inputs, targets = inputs.to(device), targets.to(device)
             abs_inputs = get_inputs(args.test_domain, inputs, args.test_eps, device, dtype=dtype)
             nat_out = net(inputs)
