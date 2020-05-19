@@ -4,13 +4,20 @@ import torchvision
 import torchvision.transforms as transforms
 
 
-def get_mean_sigma(device, dataset):
+def get_mean_sigma(device, dataset, IBP=False):
     if dataset == 'cifar10':
         mean = torch.FloatTensor([0.4914, 0.4822, 0.4465]).view((1, 3, 1, 1))
         sigma = torch.FloatTensor([0.2023, 0.1994, 0.2010]).view((1, 3, 1, 1))
     else:
         mean = torch.FloatTensor([0.1307]).view((1, 1, 1, 1))
         sigma = torch.FloatTensor([0.3081]).view((1, 1, 1, 1))
+    if IBP:
+        if dataset == 'cifar10':
+            mean = torch.FloatTensor([0.4914, 0.4822, 0.4465]).view((1, 3, 1, 1))
+            sigma = torch.FloatTensor([0.2023, 0.1994, 0.2010]).view((1, 3, 1, 1))
+        else:
+            mean = torch.FloatTensor([0.0]).view((1, 1, 1, 1))
+            sigma = torch.FloatTensor([1.0]).view((1, 1, 1, 1))
     return mean.to(device), sigma.to(device)
 
 

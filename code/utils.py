@@ -2,7 +2,9 @@ import torch
 import torch.nn as nn
 from ai.zonotope import HybridZonotope
 from layers import Linear
-from networks import ConvMed, FFNN, ConvMedBig
+from networks import ConvMed, FFNN, ConvMedBig, \
+    model_cnn_2layer, model_cnn_4layer, IBP_large, \
+    cnn_2layer, cnn_4layer, cnn_IBP_large
 
 
 def clamp_image(x, eps):
@@ -14,6 +16,7 @@ def clamp_image(x, eps):
 
 
 def get_network(device, args, input_size, input_channel, n_class):
+    need_converter = False
     if args.net.startswith('ffnn_'):
         tokens = args.net.split('_')
         sizes = [int(x) for x in tokens[1:]]
@@ -33,11 +36,48 @@ def get_network(device, args, input_size, input_channel, n_class):
         width3 = int(tokens[4])
         linear_size = int(tokens[5])
         net = ConvMedBig(device, args.dataset, n_class, input_size, input_channel, width1, width2, width3, linear_size=linear_size)
+    elif args.net.startswith('cnn_2layer_'):
+        need_converter = True
+        tokens = args.net.split('_')
+        assert tokens[0] == 'cnn'
+        width = int(tokens[3])
+        linear_size = int(tokens[4])
+        net = model_cnn_2layer(input_channel, input_size, width, linear_size)
+        net_IBP = cnn_2layer(
+            device, args.dataset, input_channel, input_size, width, linear_size
+        )
+    elif args.net.startswith('cnn_4layer_'):
+        need_converter = True
+        tokens = args.net.split('_')
+        assert tokens[0] == 'cnn'
+        width = int(tokens[3])
+        linear_size = int(tokens[4])
+        net = model_cnn_4layer(input_channel, input_size, width, linear_size)
+        net_IBP = cnn_4layer(
+            device, args.dataset, input_channel, input_size, width, linear_size
+        )
+    elif args.net.startswith('IBP'):
+        need_converter = True
+        tokens = args.net.split('_')
+        assert tokens[0] == 'IBP'
+        linear_size = int(tokens[2])
+        net = IBP_large(input_channel, input_size, linear_size)
+        net_IBP = cnn_IBP_large(
+            device, args.dataset, input_channel, input_size, linear_size
+        )
     else:
         assert False, 'Unknown network!'
     net = net.to(device)
-    if args.load_model is not None:
+    if need_converter:
+        net_IBP.to(device)
+    if args.load_model is not None and not need_converter:
         net.load_state_dict(torch.load(args.load_model))
+    elif args.load_model and need_converter:
+        net.load_state_dict(torch.load(args.load_model)['state_dict'])
+    if need_converter:
+        net_IBP.converter(net)
+        net_IBP.to(device)
+        return net_IBP
     return net
 
 
