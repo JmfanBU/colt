@@ -57,7 +57,7 @@ docs/_build/
 target/
 
 # dataset
-IBP_Adv_Training/data/
+data/
 
 # networks
 IBP_Adv_Training/cifar*/
