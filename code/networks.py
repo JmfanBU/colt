@@ -171,8 +171,8 @@ class cnn_4layer(SeqNet):
     ):
         super(cnn_4layer, self).__init__()
 
-        mean, sigma = get_mean_sigma(device, dataset)
-        self.normalizer = Normalization(mean, sigma, IBP=True)
+        mean, sigma = get_mean_sigma(device, dataset, IBP=True)
+        self.normalizer = Normalization(mean, sigma)
 
         self.layers = [
             Normalization(mean, sigma),
