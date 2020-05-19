@@ -15,7 +15,7 @@ from utils import get_inputs, get_network
 from refinement import refine
 
 dtype = torch.float64
-device = 'cpu'
+device = 'cuda'
 
 
 def report(ver_logdir, tot_verified_corr, tot_nat_ok, tot_attack_ok, tot_pgd_ok, test_idx, tot_tests, test_data):
