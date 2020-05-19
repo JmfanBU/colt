@@ -73,7 +73,7 @@ def get_network(device, args, input_size, input_channel, n_class):
     if args.load_model is not None and not need_converter:
         net.load_state_dict(torch.load(args.load_model))
     elif args.load_model and need_converter:
-        net.load_state_dict(torch.load(args.load_model)['state_dict'])
+        net.load_state_dict(torch.load(args.load_model, map_location=device)['state_dict'])
     if need_converter:
         net_IBP.converter(net)
         net_IBP.to(device)
