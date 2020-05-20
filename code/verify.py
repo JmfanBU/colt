@@ -243,7 +243,7 @@ def verify_test(args, net, inputs, targets, abs_inputs, bounds, test_data, test_
 def main():
     args = get_args()
 
-    ver_logdir = args.load_model[:-3] + '_ver'
+    ver_logdir = args.load_model[:-3] + '_ver' + str(args.test_eps)
     if not os.path.exists(ver_logdir):
         os.makedirs(ver_logdir)
 
