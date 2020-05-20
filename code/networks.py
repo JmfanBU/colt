@@ -252,7 +252,7 @@ class cnn_IBP_large(SeqNet):
     def __init__(
         self, device, dataset, input_channel, input_size, linear_size
     ):
-        super(cnn_4layer, self).__init__()
+        super(cnn_IBP_large, self).__init__()
 
         mean, sigma = get_mean_sigma(device, dataset, IBP=True)
         self.normalizer = Normalization(mean, sigma)
