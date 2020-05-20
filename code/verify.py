@@ -247,7 +247,7 @@ def main():
     if not os.path.exists(ver_logdir):
         os.makedirs(ver_logdir)
 
-    logger = Logger(open(ver_logdir + '/' + str(args.end_idx) + '.log', 'w'))
+    logger = Logger(open(ver_logdir + '/' + str(args.num_samples) + '.log', 'w'))
 
     num_train, _, test_loader, input_size, input_channel, n_class = get_loaders(args)
     net = get_network(device, args, input_size, input_channel, n_class)
