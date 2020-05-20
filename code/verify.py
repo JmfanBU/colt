@@ -18,17 +18,28 @@ dtype = torch.float64
 device = 'cuda'
 
 
-def report(ver_logdir, tot_verified_corr, tot_nat_ok, tot_attack_ok, tot_pgd_ok, test_idx, tot_tests, test_data):
+class Logger(object):
+    def __init__(self, log_file = None):
+        self.log_file = log_file
+
+    def log(self, *args, **kwargs):
+        print(*args, **kwargs)
+        if self.log_file:
+            print(*args, **kwargs, file = self.log_file)
+            self.log_file.flush()
+
+
+def report(ver_logdir, tot_verified_corr, tot_nat_ok, tot_attack_ok, tot_pgd_ok, test_idx, tot_tests, test_data, logger):
     """ Logs evaluation statistics to standard output. """
     if tot_tests % 1 == 0:
-        print('tot_tests: %d, verified: %.5lf [%d/%d], nat_ok: %.5lf [%d/%d], latent_ok: %.5lf [%d/%d], pgd_ok: %.5lf [%d/%d]' % (
+        logger.log('tot_tests: %d, verified: %.5lf [%d/%d], nat_ok: %.5lf [%d/%d], latent_ok: %.5lf [%d/%d], pgd_ok: %.5lf [%d/%d]' % (
             tot_tests,
             tot_verified_corr/tot_tests, tot_verified_corr, tot_tests,
             tot_nat_ok/tot_tests, tot_nat_ok, tot_tests,
             tot_attack_ok/tot_tests, tot_attack_ok, tot_tests,
             tot_pgd_ok/tot_tests, tot_pgd_ok, tot_tests,
         ))
-        print('=====================================')
+        logger.log('=====================================')
     out_file = os.path.join(ver_logdir, '{}.p'.format(test_idx))
     pickle.dump(test_data, open(out_file, 'wb'))
 
@@ -235,9 +246,11 @@ def main():
     if not os.path.exists(ver_logdir):
         os.makedirs(ver_logdir)
 
+    logger = Logger(open(ver_logdir + '/' + str(args.end_idx) + '.log', 'w'))
+
     num_train, _, test_loader, input_size, input_channel, n_class = get_loaders(args)
     net = get_network(device, args, input_size, input_channel, n_class)
-    print(net)
+    logger.log(net)
 
     args.test_domains = []
     # with torch.no_grad():
@@ -255,7 +268,7 @@ def main():
             tot_tests += 1
             test_file = os.path.join(ver_logdir, '{}.p'.format(test_idx))
             test_data = pickle.load(open(test_file, 'rb')) if (not args.no_load) and os.path.isfile(test_file) else {}
-            print('Verify test_idx =', test_idx)
+            logger.log('Verify test_idx =', test_idx)
 
             net.reset_bounds()
 
@@ -266,7 +279,7 @@ def main():
             tot_nat_ok += float(nat_ok)
             test_data['ok'] = nat_ok
             if not nat_ok:
-                report(ver_logdir, tot_verified_corr, tot_nat_ok, tot_attack_ok, tot_pgd_ok, test_idx, tot_tests, test_data)
+                report(ver_logdir, tot_verified_corr, tot_nat_ok, tot_attack_ok, tot_pgd_ok, test_idx, tot_tests, test_data, logger)
                 continue
 
             for _ in range(args.attack_restarts):
@@ -280,16 +293,16 @@ def main():
                 tot_pgd_ok += 1
             else:
                 test_data['pgd_ok'] = 0
-                report(ver_logdir, tot_verified_corr, tot_nat_ok, tot_attack_ok, tot_pgd_ok, test_idx, tot_tests, test_data)
+                report(ver_logdir, tot_verified_corr, tot_nat_ok, tot_attack_ok, tot_pgd_ok, test_idx, tot_tests, test_data, logger)
                 continue
 
             if 'verified' in test_data and test_data['verified']:
                 tot_verified_corr += 1
                 tot_attack_ok += 1
-                report(ver_logdir, tot_verified_corr, tot_nat_ok, tot_attack_ok, tot_pgd_ok, test_idx, tot_tests, test_data)
+                report(ver_logdir, tot_verified_corr, tot_nat_ok, tot_attack_ok, tot_pgd_ok, test_idx, tot_tests, test_data, logger)
                 continue
             if args.no_milp:
-                report(ver_logdir, tot_verified_corr, tot_nat_ok, tot_attack_ok, tot_pgd_ok, test_idx, tot_tests, test_data)
+                report(ver_logdir, tot_verified_corr, tot_nat_ok, tot_attack_ok, tot_pgd_ok, test_idx, tot_tests, test_data, logger)
                 continue
 
             zono_inputs = get_inputs('zono_iter', inputs, args.test_eps, device, dtype=dtype)
@@ -314,7 +327,7 @@ def main():
             test_data['verified'] = int(verified_corr.item())
             if verified_corr:
                 tot_verified_corr += 1
-                report(ver_logdir, tot_verified_corr, tot_nat_ok, tot_attack_ok, tot_pgd_ok, test_idx, tot_tests, test_data)
+                report(ver_logdir, tot_verified_corr, tot_nat_ok, tot_attack_ok, tot_pgd_ok, test_idx, tot_tests, test_data, logger)
                 continue
 
             loss_after = net(abs_inputs).ce_loss(targets)
@@ -323,7 +336,7 @@ def main():
                 for lidx in range(0, args.layer_idx+2):
                     net.blocks[lidx].bounds = bounds[lidx]
 
-                print('loss before refine: ', net(abs_inputs).ce_loss(targets))
+                logger.log('loss before refine: ', net(abs_inputs).ce_loss(targets))
                 refine_dim = bounds[args.refine_lidx+1][0].shape[2]
                 pbar = tqdm(total=refine_dim*refine_dim, dynamic_ncols=True)
                 for refine_i in range(refine_dim):
@@ -332,7 +345,7 @@ def main():
                         pbar.update(1)
                 pbar.close()
                 loss_after = net(abs_inputs).ce_loss(targets)
-                print('loss after refine: ', loss_after)
+                logger.log('loss after refine: ', loss_after)
 
             if loss_after < args.loss_threshold:
                 if args.refine_opt is not None:
@@ -341,7 +354,7 @@ def main():
                 if verify_test(args, net, inputs, targets, abs_inputs, bounds, test_data, test_idx):
                     tot_verified_corr += 1
                     test_data['verified'] = True
-            report(ver_logdir, tot_verified_corr, tot_nat_ok, tot_attack_ok, tot_pgd_ok, test_idx, tot_tests, test_data)
+            report(ver_logdir, tot_verified_corr, tot_nat_ok, tot_attack_ok, tot_pgd_ok, test_idx, tot_tests, test_data, logger)
     img_file.close()
 
 
