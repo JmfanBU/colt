@@ -39,6 +39,8 @@ def get_args():
     parser.add_argument('--slope_iters', default=500, type=int, help='number of iterations to learn the slopes')
     parser.add_argument('--loss_threshold', default=1e9, type=float, help='threshold to consider for MILP verification')
 
+    parser.add_argument('--num_samples', default=10000, type=int, help='number of test samples')
+
     parser.add_argument('--n-rand-proj', default=50, type=int, help='number of random projections')
     parser.add_argument('--layers', required=False, default=None, type=int, nargs='+', help='layer indices for training')
     return parser.parse_args()

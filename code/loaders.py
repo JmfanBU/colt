@@ -76,6 +76,6 @@ def get_loaders(args):
         train_set, test_set = torch.utils.data.random_split(train_set, [len(train_set) - args.n_valid, args.n_valid])
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=args.train_batch, shuffle=True, num_workers=8, drop_last=True)
-    test_loader = torch.utils.data.DataLoader(test_set, batch_size=args.test_batch, shuffle=True, num_workers=8, drop_last=True)
+    test_loader = torch.utils.data.DataLoader(test_set, batch_size=args.test_batch, shuffle=False, num_workers=8, drop_last=True)
     return len(train_set), train_loader, test_loader, input_size, input_channels, n_class
 
