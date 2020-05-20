@@ -4,6 +4,7 @@ import os
 import pickle
 import numpy as np
 import torch
+import random
 from tqdm import tqdm
 from args_factory_verifier import get_args
 from gurobipy import GRB, Model, LinExpr
@@ -260,10 +261,14 @@ def main():
     latent_idx = args.layer_idx if args.latent_idx is None else args.latent_idx
     img_file = open(args.unverified_imgs_file, 'w')
 
+    sampling_list = random.sample(range(0, 10000), args.num_samples)
+
     with torch.no_grad():
         tot_verified_corr, tot_nat_ok, tot_attack_ok, tot_pgd_ok, tot_tests = 0, 0, 0, 0, 0
         for test_idx, (inputs, targets) in enumerate(test_loader):
             if test_idx < args.start_idx or test_idx >= args.end_idx:
+                continue
+            if test_idx not in sampling_list:
                 continue
             tot_tests += 1
             test_file = os.path.join(ver_logdir, '{}.p'.format(test_idx))
