@@ -266,6 +266,8 @@ def main():
     with torch.no_grad():
         tot_verified_corr, tot_nat_ok, tot_attack_ok, tot_pgd_ok, tot_tests = 0, 0, 0, 0, 0
         for test_idx, (inputs, targets) in enumerate(test_loader):
+            pgd_ok = True
+            latent_ok = True
             if test_idx < args.start_idx or test_idx >= args.end_idx:
                 continue
             if test_idx not in sampling_list:
