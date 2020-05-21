@@ -1,0 +1,3 @@
+./certify_zono_mnist_IBP_Med_0.3 && \
+./certify_zono_mnist_IBP_Med_0.4 && \
+./certify_zono_mnist_IBP_Med_0.2

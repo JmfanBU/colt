@@ -1,0 +1,19 @@
+#!/bin/bash
+
+for i in 0
+do
+    python code/verify_zono.py \
+        --dataset mnist \
+        --net cnn_4layer_width_8_512 \
+        --load_model trained_models/cnn_4layer_width_8_best_mnist.pth \
+        --test_eps 0.4 \
+        --attack_restarts 0 --test_att_n_steps 0 --test_att_step_size 0.15 \
+        --start_idx 0 --end_idx 10000 --num_samples 1000 \
+        --num_iters 100 \
+        --layer_idx 8 \
+        --refine_lidx 3 \
+        --milp_timeout 1000 \
+        --max_binary 30 \
+        --test_batch 20 \
+        --fail_break
+done
