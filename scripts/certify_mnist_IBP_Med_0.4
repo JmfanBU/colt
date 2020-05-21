@@ -5,7 +5,7 @@ do
     python code/verify.py \
         --dataset mnist \
         --net cnn_4layer_width_8_512 \
-        --load_model trained_models/cnn_4layer_width_8_best_mnist.pth \
+        --load_model trained_models/cnn_4layer_width_8_best_mnist_0.4.pth \
         --test_eps 0.4 \
         --attack_restarts 1 --test_att_n_steps 1 --test_att_step_size 0.15 \
         --start_idx 0 --end_idx 10000 --num_samples 1000 \
