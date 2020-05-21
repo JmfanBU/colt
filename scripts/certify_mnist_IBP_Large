@@ -1,0 +1,2 @@
+./scripts/certify_mnist_IBP_Large_0.3 && \
+./scripts/certify_mnist_IBP_Large_0.4
