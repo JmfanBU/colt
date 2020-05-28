@@ -65,3 +65,4 @@ IBP_Adv_Training/mnist*/
 IBP_Adv_Training/models_crown*/
 trained_models/*._ver
 trained_models/*._*
+trained_models/backups
