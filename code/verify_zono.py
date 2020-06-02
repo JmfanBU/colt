@@ -1,6 +1,7 @@
 import sys
 sys.path.append('../')
 import os
+import os.path as osp
 import pickle
 import numpy as np
 import torch
@@ -16,7 +17,7 @@ from utils import get_inputs, get_network
 from refinement import refine
 
 dtype = torch.float64
-device = 'cuda'
+device = 'cuda:1'
 
 
 class Logger(object):
@@ -262,6 +263,13 @@ def main():
     img_file = open(args.unverified_imgs_file, 'w')
 
     sampling_list = random.sample(range(0, 10000), args.num_samples)
+    if args.sample_idx:
+        if osp.isfile(ver_logdir + '/' + args.sample_idx):
+            with open(ver_logdir + '/' + args.sample_idx, 'r') as file:
+                sampling_list = eval(file.read())
+        else:
+            with open(ver_logdir + '/' + args.sample_idx, 'w') as file:
+                file.write(str(sampling_list))
 
     with torch.no_grad():
         tot_verified_corr, tot_nat_ok, tot_attack_ok, tot_pgd_ok, tot_tests = 0, 0, 0, 0, 0
