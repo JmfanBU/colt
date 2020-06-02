@@ -1,0 +1,76 @@
+cnn_IBP_large(
+  (normalizer): Normalization()
+  (blocks): Sequential(
+    (layers): ModuleList(
+      (0): Normalization()
+      (1): Conv2d(
+        (conv): Conv2d(1, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (2): ReLU()
+      (3): Conv2d(
+        (conv): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (4): ReLU()
+      (5): Conv2d(
+        (conv): Conv2d(64, 128, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+      )
+      (6): ReLU()
+      (7): Conv2d(
+        (conv): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (8): ReLU()
+      (9): Conv2d(
+        (conv): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+      (10): ReLU()
+      (11): Flatten()
+      (12): Linear(
+        (linear): Linear(in_features=25088, out_features=512, bias=True)
+      )
+      (13): ReLU()
+      (14): Linear(
+        (linear): Linear(in_features=512, out_features=10, bias=True)
+      )
+    )
+  )
+)
+Verify test_idx = 17
+tot_tests: 1, verified: 1.00000 [1/1], nat_ok: 1.00000 [1/1], latent_ok: 1.00000 [1/1], pgd_ok: 1.00000 [1/1]
+=====================================
+Verify test_idx = 22
+tot_tests: 2, verified: 1.00000 [2/2], nat_ok: 1.00000 [2/2], latent_ok: 1.00000 [2/2], pgd_ok: 1.00000 [2/2]
+=====================================
+Verify test_idx = 24
+tot_tests: 3, verified: 1.00000 [3/3], nat_ok: 1.00000 [3/3], latent_ok: 1.00000 [3/3], pgd_ok: 1.00000 [3/3]
+=====================================
+Verify test_idx = 27
+tot_tests: 4, verified: 1.00000 [4/4], nat_ok: 1.00000 [4/4], latent_ok: 1.00000 [4/4], pgd_ok: 1.00000 [4/4]
+=====================================
+Verify test_idx = 43
+tot_tests: 5, verified: 1.00000 [5/5], nat_ok: 1.00000 [5/5], latent_ok: 1.00000 [5/5], pgd_ok: 1.00000 [5/5]
+=====================================
+Verify test_idx = 44
+tot_tests: 6, verified: 1.00000 [6/6], nat_ok: 1.00000 [6/6], latent_ok: 1.00000 [6/6], pgd_ok: 1.00000 [6/6]
+=====================================
+Verify test_idx = 54
+tot_tests: 7, verified: 1.00000 [7/7], nat_ok: 1.00000 [7/7], latent_ok: 1.00000 [7/7], pgd_ok: 1.00000 [7/7]
+=====================================
+Verify test_idx = 56
+tot_tests: 8, verified: 1.00000 [8/8], nat_ok: 1.00000 [8/8], latent_ok: 1.00000 [8/8], pgd_ok: 1.00000 [8/8]
+=====================================
+Verify test_idx = 85
+tot_tests: 9, verified: 1.00000 [9/9], nat_ok: 1.00000 [9/9], latent_ok: 1.00000 [9/9], pgd_ok: 1.00000 [9/9]
+=====================================
+Verify test_idx = 94
+tot_tests: 10, verified: 1.00000 [10/10], nat_ok: 1.00000 [10/10], latent_ok: 1.00000 [10/10], pgd_ok: 1.00000 [10/10]
+=====================================
+Verify test_idx = 96
+tot_tests: 11, verified: 1.00000 [11/11], nat_ok: 1.00000 [11/11], latent_ok: 1.00000 [11/11], pgd_ok: 1.00000 [11/11]
+=====================================
+Verify test_idx = 107
+tot_tests: 12, verified: 1.00000 [12/12], nat_ok: 1.00000 [12/12], latent_ok: 1.00000 [12/12], pgd_ok: 1.00000 [12/12]
+=====================================
+Verify test_idx = 124
+tot_tests: 13, verified: 1.00000 [13/13], nat_ok: 1.00000 [13/13], latent_ok: 1.00000 [13/13], pgd_ok: 1.00000 [13/13]
+=====================================
+Verify test_idx = 143
