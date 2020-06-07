@@ -17,7 +17,7 @@ from utils import get_inputs, get_network
 from refinement import refine
 
 dtype = torch.float64
-device = 'cuda:1'
+device = 'cuda'
 
 
 class Logger(object):
